@@ -1,0 +1,29 @@
+{
+  "name": "BusFactor",
+  "version": "1.0.0",
+  "description": "Calculate the bus factor for a given repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yamikuronue/BusFactor.git"
+  },
+  "author": "Yamikuronue",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/yamikuronue/BusFactor/issues"
+  },
+  "homepage": "https://github.com/yamikuronue/BusFactor",
+  "dependencies": {
+    "async": "^1.3.0",
+    "git-tools": "^0.1.4",
+    "rimraf": "^2.4.1"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
+  }
+}
