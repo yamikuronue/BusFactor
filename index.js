@@ -27,11 +27,43 @@ repoAdapter.init(url, location, function(err) {
 			})
 		}, function(err) {
 			var numfiles = files.length;
+			var candidates = {};
 			console.log("File owners:");
 			console.log("========================");
 			for (var i = 0; i < numfiles; i++) {
-				console.log(files[i].owner + "\t\t" + files[i].filename);
+				var owner = files[i].owner;
+				if (!candidates[owner]) {
+					candidates[owner] = 0;
+				}
+				candidates[owner]++;
+				console.log(owner + "\t\t" + files[i].filename);
 			}
+			
+			//Sort the authors
+			var ownersSorted = Object.keys(candidates).sort(function(a,b){return candidates[a]-candidates[b]})
+			var numAuthors = ownersSorted.length;
+			
+			var runningTotal = 0;
+			var busFactor = 0;
+			var dead = false;
+			
+			console.log("\n\n");
+			console.log("Authors:")
+			console.log("========================");
+			for (var i = 0; i < numAuthors; i++) {
+				runningTotal += candidates[ownersSorted[i]];	
+				console.log(ownersSorted[i] + "(" + candidates[ownersSorted[i]] + ")");
+				
+				if (!dead) busFactor++;
+				if (runningTotal >= numfiles/2) {
+					dead = true;
+					console.log("---------Bus has killed project----------");
+				}				
+			}
+			
+			console.log("\n\n");
+			console.log("Bus factor: " + busFactor);
+			
 		});
 	});
 
