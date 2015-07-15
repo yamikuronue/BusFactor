@@ -7,13 +7,13 @@ var Path = require("path");
 var async = require("async");
  
 var files = [];
-var location = Path.join("tmp","wc1");
+var location = Path.join("tmp","wc4");
 
 repoAdapter.init(url, location, function(err) {
 	if (err) {
 		console.log(err); return;
 	}
-	recursive(location, [Path.join("**",".git","*"),".gitignore",'LICENSE','README.md'], function (err, lsFiles) {
+	recursive(location, [Path.join("**",".git","*"),".gitignore"], function (err, lsFiles) {
 		async.each(lsFiles,function(file, cb) {
 			file = file.replace(location + Path.sep,"");
 			repoAdapter.getOwner(file,function(err, owner) {
