@@ -19,10 +19,10 @@ describe("git adapter", function() {
 describe("svn adapter", function() {
 	it("should work", function(done) {
 		 this.timeout(50000);
-		svnModule.init("https://github.com/yamikuronue/BusFactor", "tmp/repo2",function() {
+		svnModule.init("https://github.com/yamikuronue/BusFactor/trunk", "tmp/repo2",function() {
 			svnModule.getOwner("test/repoTests.js", function(err, author) {
-				assert.equal("Yami", author);
 				assert.notOk(err);
+				assert.equal("Yami", author);
 				done();
 			})
 		});
