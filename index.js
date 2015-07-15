@@ -13,10 +13,9 @@ repoAdapter.init(url, location, function(err) {
 	if (err) {
 		console.log(err); return;
 	}
-	recursive(location, [Path.join("**",".git","*"),".gitignore",'LICENSE','README.md'], function (err, files) {
-		async.each(files,function(file, cb) {
+	recursive(location, [Path.join("**",".git","*"),".gitignore",'LICENSE','README.md'], function (err, lsFiles) {
+		async.each(lsFiles,function(file, cb) {
 			file = file.replace(location + Path.sep,"");
-			console.log(file);
 			repoAdapter.getOwner(file,function(err, owner) {
 				if (!err) {
 					files.push({
@@ -29,9 +28,9 @@ repoAdapter.init(url, location, function(err) {
 		}, function(err) {
 			var numfiles = files.length;
 			console.log("File owners:");
-			console.log("============");
+			console.log("========================");
 			for (var i = 0; i < numfiles; i++) {
-				console.log(files[i].filename + "\t" + files[i].owner);
+				console.log(files[i].owner + "\t\t" + files[i].filename);
 			}
 		});
 	});
