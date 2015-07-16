@@ -21,7 +21,8 @@
     "git-blame": "^0.1.1",
     "git-tools": "^0.2.0",
     "recursive-readdir": "^1.2.1",
-    "rimraf": "^2.4.1"
+    "rimraf": "^2.4.1",
+    "yargs": "^3.15.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",
