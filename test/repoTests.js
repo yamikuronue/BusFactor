@@ -92,7 +92,7 @@ describe("git adapter", function() {
 		});
 	})
 	
-	it("should not hit the blank-author bug (alt input)", function(done) {
+	it("should not hit the blank-author bug (alt input 1)", function(done) {
 		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
 		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_cartman.txt'));
 		
@@ -110,6 +110,29 @@ describe("git adapter", function() {
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("cartmans.name", author);
+				done();
+			})
+		});
+	})
+	
+	it("should not hit the blank-author bug (alt input 2)", function(done) {
+		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_likes.txt'));
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+				stdout: stream,
+				stderr: new events.EventEmitter(), //no events needed
+				on: function(event, callback) {
+					stream.on(event, callback);
+				}
+			});
+
+		this.timeout(50000);
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+			fakeRepo.restore();
+			gitModule.getOwner("test/repoTests.js", function(err, author) {
+				assert.notOk(err);
+				assert.equal("Yamikuronue", author);
 				done();
 			})
 		});
