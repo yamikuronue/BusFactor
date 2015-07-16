@@ -59,7 +59,7 @@ repoAdapter.init(argv.repo, location, function(err) {
 			})
 		}, function(err) {
 			if (err) {
-				output.reportErr(err);
+				output.reportError(err);
 				return;
 			}
 
