@@ -1,4 +1,4 @@
-var url = "https://github.com/yamikuronue/BusFactor.git"; //TODO: paramaterize
+var url = "https://github.com/SockDrawer/SockBot.git"; //TODO: paramaterize
 
 var repoAdapter = require("./lib/git"); //TODO: allow svn
 var recursive = require('recursive-readdir');
@@ -40,7 +40,7 @@ repoAdapter.init(url, location, function(err) {
 			}
 			
 			//Sort the authors
-			var ownersSorted = Object.keys(candidates).sort(function(a,b){return candidates[a]-candidates[b]})
+			var ownersSorted = Object.keys(candidates).sort(function(a,b){return candidates[b]-candidates[a]})
 			var numAuthors = ownersSorted.length;
 			
 			var runningTotal = 0;
@@ -55,7 +55,7 @@ repoAdapter.init(url, location, function(err) {
 				console.log(ownersSorted[i] + "(" + candidates[ownersSorted[i]] + ")");
 				
 				if (!dead) busFactor++;
-				if (runningTotal >= numfiles/2) {
+				if (runningTotal >= numfiles/2 && !dead) {
 					dead = true;
 					console.log("---------Bus has killed project----------");
 				}				
