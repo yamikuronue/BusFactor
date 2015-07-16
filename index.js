@@ -18,7 +18,7 @@ var argv = require('yargs')
         alias : 'type',
         demand: false,
         default: 'auto',
-        describe: 'Type of repository. Accepts "git", "svn", or "auto"',
+        describe: 'Type of repository. Accepts "git", "hg", "svn", or "auto"',
         type: 'string',
         nargs: 1
     })
@@ -30,7 +30,10 @@ if (argv.type === 'auto') {
 		console.log("Auto-detected Git repository");
 	} else if (argv.repo.indexOf('svn') > -1) {
 		argv.type = 'svn';
-		console.log("Auto-detected SVN repository");
+		console.log("Auto-detected Hg repository");
+	} else if (argv.repo.indexOf('hg') > -1) {
+		argv.type = 'hg';
+		console.log("Auto-detected Hg repository");
 	} else {
 		console.log("Could not detect repository type, please be explicit!");
 		return;
@@ -45,8 +48,8 @@ repoAdapter.init(argv.repo, location, function(err) {
 		output.reportErr(err);
 		return;
 	}
-	recursive(location, [Path.join("**",".git","*"),".gitignore",Path.join("**",".svn","*")], function (err, lsFiles) {
-		async.each(lsFiles,function(file, cb) {
+	recursive(location, [Path.join("**",".git","*"),".gitignore",Path.join("**",".svn","*"),".hg*"], function (err, lsFiles) {
+		async.eachSeries(lsFiles,function(file, cb) {
 			file = file.replace(location + Path.sep,"");
 			repoAdapter.getOwner(file,function(err, owner) {
 				if (!err) {
@@ -59,7 +62,7 @@ repoAdapter.init(argv.repo, location, function(err) {
 			})
 		}, function(err) {
 			if (err) {
-				output.reportErr(err);
+				output.reportError(err);
 				return;
 			}
 
