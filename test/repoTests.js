@@ -8,6 +8,18 @@ var fs = require("fs");
 var Paths = require("path");
 var events = require('events');
 
+(function() {
+    var childProcess = require("child_process");
+    oldSpawn = childProcess.spawn;
+    function mySpawn() {
+        console.log('spawn called');
+        console.log(arguments);
+        var result = oldSpawn.apply(this, arguments);
+        return result;
+    }
+    childProcess.spawn = mySpawn;
+})();
+
 describe("git adapter", function() {
 	var sandbox;
 
@@ -36,29 +48,68 @@ describe("git adapter", function() {
 
 	it("should report one author when there's one author", function(done) {
 		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
-
-		var fakeGit = {
-			
-		}
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_oneauth.txt'));
 		
-		var fakeSpawn = sandbox.stub(child_process, "spawn", function() {
-			console.log("Spawn called!");
-			var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_oneauth.txt'));
-			return {
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
 				stdout: stream,
 				stderr: new events.EventEmitter(), //no events needed
 				on: function(event, callback) {
 					stream.on(event, callback);
 				}
-			}
-		});
-		
+			});
 
 		this.timeout(50000);
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+			fakeRepo.restore();
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yami", author);
+				done();
+			})
+		});
+	})
+	
+	it("should not hit the blank-author bug", function(done) {
+		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_noauth.txt'));
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+				stdout: stream,
+				stderr: new events.EventEmitter(), //no events needed
+				on: function(event, callback) {
+					stream.on(event, callback);
+				}
+			});
+
+		this.timeout(50000);
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+			fakeRepo.restore();
+			gitModule.getOwner("test/repoTests.js", function(err, author) {
+				assert.notOk(err);
+				assert.equal("Yami", author);
+				done();
+			})
+		});
+	})
+	
+	it("should not hit the blank-author bug (alt input)", function(done) {
+		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_cartman.txt'));
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+				stdout: stream,
+				stderr: new events.EventEmitter(), //no events needed
+				on: function(event, callback) {
+					stream.on(event, callback);
+				}
+			});
+
+		this.timeout(50000);
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+			fakeRepo.restore();
+			gitModule.getOwner("test/repoTests.js", function(err, author) {
+				assert.notOk(err);
+				assert.equal("cartmans.name", author);
 				done();
 			})
 		});
