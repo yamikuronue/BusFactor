@@ -52,7 +52,7 @@ repoAdapter.init(url, location, function(err) {
 			console.log("========================");
 			for (var i = 0; i < numAuthors; i++) {
 				runningTotal += candidates[ownersSorted[i]];	
-				console.log(ownersSorted[i] + "(" + candidates[ownersSorted[i]] + ")");
+				console.log(ownersSorted[i] + "(" + candidates[ownersSorted[i]] + ") [" + Math.round((candidates[ownersSorted[i]]/numfiles * 100)) + "%]");
 				
 				if (!dead) busFactor++;
 				if (runningTotal >= numfiles/2 && !dead) {
@@ -63,6 +63,7 @@ repoAdapter.init(url, location, function(err) {
 			
 			console.log("\n\n");
 			console.log("Bus factor: " + busFactor);
+			console.log("Total files: " + numfiles);
 			
 		});
 	});
