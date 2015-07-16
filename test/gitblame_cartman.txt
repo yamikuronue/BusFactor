@@ -1,0 +1,59 @@
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  1) #!/bin/bash
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  2) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  3) TARGET=$1
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  4) if [ -z "$TARGET" ]; then
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  5)        TARGET="manager"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  6) fi
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  7) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  8) usage() {
+7a117966 scripts/inspector.sh (cartmans.name 2014-12-04 18:30:27 +0100  9)        echo "Usage: $0 -h/-k/APP_NAME"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 10)        echo
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 11)        echo "APP_NAME can be 'manager', 'webui' etc..."
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 12)        echo "Use with -k to just kill the existing one"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 13)        exit 0
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 14) }
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 15) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 16) kill_inspector() {
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 17)        print_output=$1
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 18)        local pid=`ps -o pid=,args= -w -C node | grep node-inspector | awk '{ print $1 }'`
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 19)        if [ -z "$pid" ]; then
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 20)                if [ "$print_output" = true ]; then
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 21)                        echo "No node-inspector instance was found"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 22)                fi
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 23)        else
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 24)                echo "Killing node-inspector at $pid..."
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 25)                kill $pid
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 26)        fi
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 27) }
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 28) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 29) start_inspector() {
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 30)        local pid="`ps -o pid=,args= -w -C node | grep postmaster | awk '{ print $1 }'`"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 31)        if [ -z "$pid" ]; then
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 32)                echo "Couldn't find pid for $TARGET" >&2
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 33)                exit 1
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 34)        fi
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 35) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 36)        echo "Sending USR1 to $TARGET at pid $pid..."
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 37)        kill -s USR1 $pid
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 38)        echo "Starting node-inspector..."
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 39)        node-inspector --web-port 46000 > /dev/null &
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 40)        if [ "$?" != "0" ]; then
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 41)                echo "Failed to start node-inspector!" >&2
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 42)                exit 1
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 43)        fi
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 44) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 45)        echo "Debugger link: http://1.2.3.4:46000/debug?port=5858"
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 46) }
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 47) 
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 48) case $TARGET in
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 49)        "-k" | "--kill" )
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 50)                kill_inspector true
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 51)                ;;
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 52)        "-h" | "--help" )
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 53)                usage
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 54)                ;;
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 55)        *)
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 56)                kill_inspector false
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 57)                start_inspector
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 58)                ;;
+add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100 59) esac
