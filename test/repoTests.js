@@ -5,7 +5,8 @@ var sinon = require('sinon');
 var Repo = require( "git-tools" );
 var child_process = require("child_process");
 var fs = require("fs");
-var Paths = require("path")
+var Paths = require("path");
+var events = require('events');
 
 describe("git adapter", function() {
 	var sandbox;
@@ -18,7 +19,7 @@ describe("git adapter", function() {
 		sandbox.restore();
 	});
 
-	it("should interface with git correctly", function(done) {
+	/*it("should interface with git correctly", function(done) {
 		 this.timeout(50000);
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			if (err) {
@@ -31,7 +32,7 @@ describe("git adapter", function() {
 				done();
 			})
 		});
-	});
+	});*/
 
 	it("should report one author when there's one author", function(done) {
 		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
@@ -39,25 +40,22 @@ describe("git adapter", function() {
 		var fakeGit = {
 			
 		}
-
-		this.timeout(50000);
-		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
-			fakeRepo.restore();
-			var stream = fs.createReadStream(Paths.resolve('gitblame_oneauth.txt'));
-
-			var fakeSpawn = sandbox.stub(child_process,"spawn").returns({
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn", function() {
+			console.log("Spawn called!");
+			var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_oneauth.txt'));
+			return {
 				stdout: stream,
-				stderr: {
-					on: function(){
-						return; //No errors called
-					}
-				},
+				stderr: new events.EventEmitter(), //no events needed
 				on: function(event, callback) {
 					stream.on(event, callback);
 				}
-			});
+			}
+		});
+		
 
-
+		this.timeout(50000);
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yami", author);
