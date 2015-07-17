@@ -3,7 +3,7 @@ var Path = require("path");
 var async = require("async");
  
 var files = [];
-var location = Path.join("tmp","wc4"); //TODO: this ought to be better
+var location = Path.join("tmp","wc"); //TODO: this ought to be better
 var output = require('./reporters/console');
 
 var argv = require('yargs')
@@ -45,7 +45,7 @@ var repoAdapter = require("./lib/" + argv.type.toLowerCase());
 
 repoAdapter.init(argv.repo, location, function(err) {
 	if (err) {
-		output.reportErr(err);
+		output.reportError(err);
 		return;
 	}
 	recursive(location, [Path.join("**",".git","*"),".gitignore",Path.join("**",".svn","*"),".hg*"], function (err, lsFiles) {
