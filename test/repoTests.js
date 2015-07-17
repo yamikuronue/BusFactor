@@ -19,7 +19,7 @@ describe("git adapter", function() {
 		sandbox.restore();
 	});
 
-	it("should interface with git correctly", function(done) {
+	/*it("should interface with git correctly", function(done) {
 		this.timeout(50000);
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			assert.notOk(err);
@@ -30,7 +30,7 @@ describe("git adapter", function() {
 			})
 			
 		});
-	});
+	});*/
 
 	it("should load aliases", function(done) {
 		this.timeout(10000);
