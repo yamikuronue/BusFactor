@@ -30,7 +30,7 @@ if (argv.type === 'auto') {
 		console.log("Auto-detected Git repository");
 	} else if (argv.repo.indexOf('svn') > -1) {
 		argv.type = 'svn';
-		console.log("Auto-detected Hg repository");
+		console.log("Auto-detected SVN repository");
 	} else if (argv.repo.indexOf('hg') > -1) {
 		argv.type = 'hg';
 		console.log("Auto-detected Hg repository");
