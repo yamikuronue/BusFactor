@@ -8,44 +8,73 @@ var fs = require("fs");
 var Paths = require("path");
 var events = require('events');
 
-(function() {
-    var childProcess = require("child_process");
-    oldSpawn = childProcess.spawn;
-    function mySpawn() {
-        console.log('spawn called');
-        console.log(arguments);
-        var result = oldSpawn.apply(this, arguments);
-        return result;
-    }
-    childProcess.spawn = mySpawn;
-})();
-
 describe("git adapter", function() {
 	var sandbox;
 
 	beforeEach(function() {
 		sandbox = sinon.sandbox.create();
+		sandbox.stub(gitModule, "loadAliases").yields({
+			"Yamikuronue" : "yamikuronue@gmail.com",
+			"Yami" : "yamikuronue@gmail.com",
+			"yamikuronue":"yamikuronue@gmail.com"
+		});
 	});
 
 	afterEach(function() {
 		sandbox.restore();
 	});
 
-	/*it("should interface with git correctly", function(done) {
+	it("should interface with git correctly", function(done) {
+		sandbox.restore();
 		 this.timeout(50000);
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
-			if (err) {
-				console.log(err);
-				assert.ok(false);
-			}
+			assert.notOk(err);
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yami", author);
 				done();
 			})
+			
 		});
-	});*/
+	});
 
+	it("should load aliases", function(done) {
+		this.timeout(10000);
+		sandbox.restore();
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo2",function(err) {
+			if (err) {
+				console.log(err);	
+			}
+			
+			assert.notOk(err);
+			gitModule.loadAliases(function(aliases) {
+				assert.equal(aliases["Yami"], "yamikuronue@gmail.com");
+				assert.equal(aliases["Yamikuronue"], "yamikuronue@gmail.com");
+				done();
+			})
+		});
+	});
+	
+	it("should translate canonical names", function(done) {
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitShortlog.txt'));
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+				stdout: stream,
+				stderr: new events.EventEmitter(), //no events needed
+				on: function(event, callback) {
+					stream.on(event, callback);
+				}
+			});
+
+		this.timeout(10000);
+		gitModule.getCanonicalName("yamikuronue@gmail.com",function(name) {
+			assert.ok(name);
+			assert.equal("Yami", name);
+			assert(fakeSpawn.called);
+			done();
+		});
+	})
+	
 	it("should report one author when there's one author", function(done) {
 		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
 		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_oneauth.txt'));
@@ -58,12 +87,14 @@ describe("git adapter", function() {
 				}
 			});
 
-		this.timeout(50000);
+		this.timeout(10000);
+		var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("Yami");
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			fakeRepo.restore();
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yami", author);
+				assert(canonStub.called);
 				done();
 			})
 		});
@@ -81,12 +112,14 @@ describe("git adapter", function() {
 				}
 			});
 
-		this.timeout(50000);
+		this.timeout(10000);
+		var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("Yami");
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			fakeRepo.restore();
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yami", author);
+				assert(canonStub.called);
 				done();
 			})
 		});
@@ -104,12 +137,14 @@ describe("git adapter", function() {
 				}
 			});
 
-		this.timeout(50000);
+		this.timeout(10000);
+		var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("cartmans.name");
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			fakeRepo.restore();
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("cartmans.name", author);
+				assert(canonStub.called);
 				done();
 			})
 		});
@@ -126,13 +161,16 @@ describe("git adapter", function() {
 					stream.on(event, callback);
 				}
 			});
+			
 
-		this.timeout(50000);
+		this.timeout(10000);
+		var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("Yamikuronue");
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
 			fakeRepo.restore();
 			gitModule.getOwner("test/repoTests.js", function(err, author) {
 				assert.notOk(err);
 				assert.equal("Yamikuronue", author);
+				assert(canonStub.called);
 				done();
 			})
 		});
