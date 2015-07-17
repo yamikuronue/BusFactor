@@ -100,6 +100,7 @@ repoAdapter.init(argv.repo, location, function(err) {
 			}
 
 			var data = {
+				"repo": argv.repo,
 				"numfiles": numfiles,
 				"files": files,
 				"numAuthors": numAuthors,
