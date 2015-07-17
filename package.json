@@ -4,7 +4,7 @@
   "description": "Calculate the bus factor for a given repository",
   "main": "index.js",
   "scripts": {
-    "test": "npm install -g mocha && mocha"
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,8 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.17",
     "mocha": "^2.2.5",
     "sinon": "^1.15.4"
   }

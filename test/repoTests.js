@@ -241,15 +241,3 @@ describe("git adapter", function() {
 	})
 
 
-/*describe("svn adapter", function() {
-	it("should interface with SVN correctly", function(done) {
-		 this.timeout(100000); //SVN is slow, it's a big repo
-		svnModule.init("https://core.svn.wordpress.org/trunk/", "tmp/repo2",function() {
-			svnModule.getOwner("license.txt", function(err, author) {
-				assert.notOk(err);
-				assert.equal("ryan", author);
-				done();
-			})
-		});
-	});
-})*/
