@@ -1,7 +1,7 @@
 # BusFactor
 Calculate the bus factor for a repository
 
-[![Build Status](https://travis-ci.org/yamikuronue/BusFactor.svg?branch=master)](https://travis-ci.org/yamikuronue/BusFactor)
+[![Build Status](https://travis-ci.org/yamikuronue/BusFactor.svg?branch=master)](https://travis-ci.org/yamikuronue/BusFactor)  [![Coverage Status](https://coveralls.io/repos/yamikuronue/BusFactor/badge.svg?branch=master&service=github)](https://coveralls.io/github/yamikuronue/BusFactor?branch=master)
 
 ##What is a bus factor?
 From Wikipedia:
