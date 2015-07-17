@@ -111,7 +111,9 @@ describe("git adapter", function() {
 				"cartmans.name" : "cartmans@email.com",
 				"Accalia" : "Accalia@gmail.com",
 				"Accalia Elementia" : "Accalia@gmail.com",
-				"RaceproUK" : "racepro@gmail.com"
+				"RaceproUK" : "racepro@gmail.com",
+				"onyx47" : "onyx@gmail.com",
+				"Onyx47" : "onyx@gmail.com"
 			});
 		});
 
@@ -192,6 +194,32 @@ describe("git adapter", function() {
 					assert.equal("Accalia", author);
 					assert(canonStub.called);
 					assert.equal("accalia@gmail.com",canonStub.getCall(0).args[0]);
+					done();
+				})
+			});
+		})
+
+		it("should not hit the blank-author bug (alt input 3)", function(done) {
+			var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
+			var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_maincss.txt'));
+			
+			var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+					stdout: stream,
+					stderr: new events.EventEmitter(), //no events needed
+					on: function(event, callback) {
+						stream.on(event, callback);
+					}
+				});
+				
+
+			this.timeout(10000);
+			var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("Onyx47");
+			gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+				gitModule.getOwner("test/repoTests.js", function(err, author) {
+					assert.notOk(err);
+					assert.equal("Onyx47", author);
+					assert(canonStub.called);
+					assert.equal("onyx@gmail.com",canonStub.getCall(0).args[0]);
 					done();
 				})
 			});
