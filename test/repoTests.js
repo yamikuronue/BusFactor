@@ -19,19 +19,6 @@ describe("git adapter", function() {
 		sandbox.restore();
 	});
 
-	/*it("should interface with git correctly", function(done) {
-		this.timeout(50000);
-		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
-			assert.notOk(err);
-			gitModule.getOwner("test/repoTests.js", function(err, author) {
-				assert.notOk(err);
-				assert.equal("Yami", author);
-				done();
-			})
-			
-		});
-	});*/
-
 	it("should load aliases", function(done) {
 		this.timeout(10000);
 		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo2",function(err) {
