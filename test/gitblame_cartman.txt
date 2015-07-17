@@ -1,4 +1,4 @@
-add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  1) #!/bin/bash
+﻿add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  1) #!/bin/bash
 add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  2) 
 add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  3) TARGET=$1
 add7a76f scripts/inspect.sh   (cartmans.name 2014-02-26 13:17:57 +0100  4) if [ -z "$TARGET" ]; then
