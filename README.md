@@ -1,6 +1,8 @@
 # BusFactor
 Calculate the bus factor for a repository
 
+[![Build Status](https://travis-ci.org/yamikuronue/BusFactor.svg?branch=master)](https://travis-ci.org/yamikuronue/BusFactor)
+
 ##What is a bus factor?
 From Wikipedia:
 
