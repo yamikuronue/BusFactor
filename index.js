@@ -1,6 +1,7 @@
 var recursive = require('recursive-readdir');
 var Path = require("path");
 var async = require("async");
+var fs = require("fs");
  
 var files = [];
 var location = Path.join("tmp","wc"); //TODO: this ought to be better
@@ -36,7 +37,6 @@ if (argv.type === 'auto') {
 		console.log("Auto-detected Hg repository");
 	} else {
 		console.log("Could not detect repository type, please be explicit!");
-		return;
 	}
 }
 
@@ -49,6 +49,10 @@ repoAdapter.init(argv.repo, location, function(err) {
 		return;
 	}
 	recursive(location, [Path.join("**",".git","*"),".gitignore",Path.join("**",".svn","*"),".hg*"], function (err, lsFiles) {
+		lsFiles = lsFiles.filter(function (value, index, array){
+			var stats = fs.statSync(value);
+ 			return stats.size > 0;
+		});
 		async.eachSeries(lsFiles,function(file, cb) {
 			file = file.replace(location + Path.sep,"");
 			repoAdapter.getOwner(file,function(err, owner) {
