@@ -175,6 +175,33 @@ describe("git adapter", function() {
 			})
 		});
 	})
+
+	it("should report no author for 0-byte files I guess", function(done) {
+		var fakeRepo = sandbox.stub(Repo,"clone").yields(null,{});
+		var stream = fs.createReadStream(Paths.join(__dirname,'gitblame_docs.txt'));
+		
+		var fakeSpawn = sandbox.stub(child_process, "spawn").returns({
+				stdout: stream,
+				stderr: new events.EventEmitter(), //no events needed
+				on: function(event, callback) {
+					stream.on(event, callback);
+				}
+			});
+			
+
+		this.timeout(10000);
+		var canonStub = sandbox.stub(gitModule,"getCanonicalName").yields("Yamikuronue");
+		gitModule.init("https://github.com/yamikuronue/BusFactor.git", "tmp/repo1",function(err) {
+			fakeRepo.restore();
+			gitModule.getOwner("test/repoTests.js", function(err, author) {
+				assert.notOk(err);
+				assert.equal("Yamikuronue", author);
+				assert(canonStub.called);
+				assert.equal("",canonStub.getCall(0).args[0]);
+				done();
+			})
+		});
+	})
 });
 
 /*describe("svn adapter", function() {
