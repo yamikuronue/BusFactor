@@ -29,3 +29,6 @@ Options:
 
 ##Why doesn't it support [insert source control product here]?
 PRs accepted.
+
+##Why does Word try to open when I run this tool on Git for windows?
+Apparently, due to a bug in Git for windows. Most error messages that can come from this tool actually come from the underlying source control product, and git has some really weird bugs on Windows. Sorry about that! It uses whatever's installed on your system, so if a patch fixes the underlying issue, this tool won't need an update. 
